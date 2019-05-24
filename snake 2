@@ -1,0 +1,119 @@
+from tkinter import *
+import random
+ 
+# On a besoin de faire bouger le snake
+
+def fleche (event) :
+    global positionx
+    global positiony
+    repas ()
+    perdu()
+    if event.keysym =="Right" :
+        X=event.x
+        Y=event.y
+        if positionx <290:
+            positionx=positionx+5
+        canevas.coords(snake,positionx,positiony,positionx+10,positiony+10)
+    if event.keysym =="Left" :
+        X=event.x
+        Y=event.y
+        if positionx >5 :
+            positionx=positionx-5
+        canevas.coords(snake,positionx,positiony,positionx+10,positiony+10)
+    if event.keysym=="Up" :
+        X=event.x
+        Y=event.y
+        if positiony >5:
+            positiony=positiony-5
+        canevas.coords(snake,positionx,positiony,positionx+10,positiony+10)
+    if event.keysym=="Down" :
+        X=event.x
+        Y=event.y
+        if positiony <290 :
+            positiony=positiony+5
+        canevas.coords(snake,positionx,positiony,positionx+10,positiony+10)
+ 
+def perdu () :
+    global positionx
+    global positiony
+    if positionx+10== 300 :   # si on a sa, on affiche perdu quand on touche la frontière de droite
+        txt.set("PERDU")
+        canevas.delete(snake)
+    if positionx==5 :          # si on a sa, on affiche perdu quand on touche la frontière de gauche
+        txt.set("PERDU")
+        canevas.delete(snake)
+    if positiony<=5 :           # Si on touche la frontière du haut
+        txt.set("PERDU")
+        canevas.delete(snake)
+    if positiony==290 :         #Si on touche la frontière du bas
+        txt.set("PERDU")
+        canevas.delete(snake)
+ 
+ 
+def repas () :
+    global vx
+    global vy
+    global positionx
+    global positiony
+    global point
+    global pomme
+    if  vx-5<=positionx<=vx+5 and vy-5<=positiony<=vy+5 :
+        vx= random.randint(1,290)
+        vy= random.randint(1,290)
+        canevas.delete(fen,point)
+        point=canevas.create_oval(vx,vy,vx+7,vy+7,fill="red")
+        scorePlusUn()
+        pomme+=1
+ 
+def scorePlusUn():
+    global score,scoreTxt
+    score+=10
+    canTexte.delete(scoreTxt)
+    scoreTxt=canTexte.create_text(25,10, anchor=CENTER, font=("Arial", 10), text=str(score))
+ 
+#Corps du programme
+ 
+fen=Tk()  # Création de la fenêtre
+ 
+corps=[]
+ 
+# Création coordonées pour la pomme
+positiony=150
+positionx=145
+vx= random.randint(1,290)
+vy= random.randint(1,290)
+ 
+fen.title("snake")   # Titre a la fenêtre
+canevas=Canvas(fen, width=300, height=300, bg="white")  # Création du connevas
+canevas.pack(side=TOP)   # Placement du cannevas
+ 
+# Création des délimitations du cannevas
+canevas . create_line( 0, 0, 0, 300, width = 12)
+canevas . create_line( 0, 0, 300, 0, width = 12)
+canevas . create_line( 303, 0, 303, 303, width = 8)
+canevas . create_line( 0, 303, 303, 303, width = 10)
+ 
+snake=canevas.create_rectangle(145, 150, 155, 160, fill='black') # Création du snake
+ 
+point=canevas.create_oval(vx,vy,vx+7,vy+7,fill="Red")  #Création de la pomme
+ 
+fen.bind("<KeyPress>",fleche)
+bouton_quitter=Button(text="Quitter",command=fen.destroy)
+bouton_quitter.pack(side=BOTTOM)
+ 
+canTexte=Canvas(fen,width=50,height=20,bg='lightgray')
+canTexte.pack(side=BOTTOM)
+ 
+pomme=1
+ 
+score=-10
+scoreTxt=0
+scorePlusUn()
+ 
+txt=StringVar()
+etiquette=Label(fen,textvariable=txt)
+etiquette.pack(side=BOTTOM)
+txt.set("Let's Go !")
+ 
+ 
+fen.mainloop()
